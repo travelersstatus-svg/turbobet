@@ -6,21 +6,23 @@
     <title>Aviator Pro Max</title>
     <script src="/socket.io/socket.io.js"></script>
     <style>
-        /* --- AAPKA ORIGINAL CSS (NO CHANGE) --- */
+        /* AAPKA ORIGINAL STYLE (No Change) */
         :root { --bg-dark: #0a0e17; --panel-bg: #161d2b; --win-green: #28a745; --accent-red: #d11348; --btn-orange: #d97706; --text-gray: #9ea0a3; }
         body { background: var(--bg-dark); color: white; font-family: sans-serif; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         
-        /* --- NEW: LOGIN STYLE (Game ke look se match karta hua) --- */
+        /* NAYA: LOGIN OVERLAY (Aapke design ke upar ek parda) */
         #auth-overlay { position: fixed; inset: 0; background: #0a0e17; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .auth-card { background: var(--panel-bg); padding: 30px; border-radius: 20px; border: 1px solid #ff0055; text-align: center; width: 85%; max-width: 350px; box-shadow: 0 0 20px rgba(255,0,85,0.2); }
-        .auth-input { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
-        
-        /* --- AAPKE PURANE STYLES --- */
+        .auth-card { background: var(--panel-bg); padding: 30px; border-radius: 20px; border: 1px solid #ff0055; text-align: center; width: 85%; max-width: 350px; }
+        .auth-input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 10px; box-sizing: border-box; }
+
+        /* AAPKE BAAKI SAARE STYLES NEECHE... (Maine wahi rakhe hain) */
         #side-menu { position: fixed; top: 0; right: -100%; width: 85%; height: 100%; background: #0f1521; z-index: 5000; transition: 0.4s; padding: 20px; box-sizing: border-box; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 6000; display: none; align-items: center; justify-content: center; }
         .modal-content { background: var(--panel-bg); padding: 20px; border-radius: 15px; width: 90%; border: 1px solid #333; }
         .top-nav { background: #0f1521; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #252f44; }
         .balance-box { background: #000; border: 1px solid var(--win-green); padding: 5px 15px; border-radius: 20px; color: var(--win-green); font-weight: bold; }
+        #level-bar-container { width: 100%; background: #1a2233; height: 5px; position: relative; }
+        #level-progress { width: 0%; background: #d97706; height: 100%; transition: 0.5s; }
         .display-area { position: relative; height: 210px; background: radial-gradient(circle at bottom left, #1a2a44 0%, #05080f 70%); margin: 10px; border-radius: 15px; border: 1px solid #252f44; overflow: hidden; }
         #multiplier-text { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); font-size: 3.5rem; font-weight: 900; z-index: 10; }
         .bet-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
@@ -28,18 +30,24 @@
         .main-btn { width: 100%; height: 45px; margin-top: 8px; border: none; border-radius: 10px; font-weight: bold; color: white; cursor: pointer; background: var(--win-green); }
         .input-box { background: #000; border: 1px solid #444; border-radius: 20px; display: flex; justify-content: space-between; padding: 4px 10px; align-items: center; }
         .input-box input { background: none; border: none; color: #fff; width: 50px; text-align: center; font-weight: bold; }
+        /* ... (Aapke baaki styles) */
     </style>
 </head>
 <body>
 
 <div id="auth-overlay">
     <div class="auth-card">
-        <h1 style="color:#ff0055; margin:0;">AVIATOR PRO</h1>
-        <p style="color:gray; font-size:12px; margin-bottom:20px;">Register to Start Playing</p>
-        <input type="number" id="reg-phone" class="auth-input" placeholder="Phone Number">
-        <input type="password" id="reg-pass" class="auth-input" placeholder="Create Password">
-        <button onclick="startApp()" style="width:100%; padding:15px; background:var(--win-green); color:white; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">REGISTER / LOGIN</button>
+        <h1 style="color:#ff0055;">AVIATOR PRO</h1>
+        <input type="number" id="u-phone" class="auth-input" placeholder="Phone Number">
+        <input type="password" id="u-pass" class="auth-input" placeholder="Password">
+        <button onclick="saveUser()" style="width:100%; padding:15px; background:var(--win-green); color:white; border:none; border-radius:10px; font-weight:bold;">LOGIN / REGISTER</button>
     </div>
+</div>
+
+<div id="side-menu">
+    <div style="display:flex; justify-content:space-between; margin-bottom:30px;"><b>AVIATOR MENU</b> <span onclick="toggleMenu()">✕</span></div>
+    <div onclick="openModal('deposit-modal')" style="padding:15px 0; border-bottom:1px solid #222;">💰 Deposit</div>
+    <div onclick="localStorage.clear(); location.reload()" style="padding:15px 0; color:var(--accent-red);">🚪 Logout</div>
 </div>
 
 <div class="top-nav">
@@ -48,6 +56,7 @@
     <div onclick="toggleMenu()" style="cursor:pointer; font-size:20px;">☰</div>
 </div>
 
+<div id="level-bar-container"><div id="level-progress"></div></div>
 <div class="display-area">
     <div id="multiplier-text">1.00x</div>
     <canvas id="gameCanvas" width="800" height="400" style="width:100%; height:100%;"></canvas>
@@ -55,80 +64,70 @@
 
 <div class="bet-container">
     <div class="bet-card">
-        <div class="input-box"><input type="number" id="amt-1" value="100"></div>
+        <div class="input-box">
+            <button onclick="adj(1,-10)" style="color:#fff; border:none; background:none;">-</button>
+            <input type="number" id="amt-1" value="100">
+            <button onclick="adj(1,10)" style="color:#fff; border:none; background:none;">+</button>
+        </div>
         <button id="btn-1" class="main-btn" onclick="handleBet(1)">BET</button>
     </div>
     <div class="bet-card">
-        <div class="input-box"><input type="number" id="amt-2" value="100"></div>
+        <div class="input-box">
+            <button onclick="adj(2,-10)" style="color:#fff; border:none; background:none;">-</button>
+            <input type="number" id="amt-2" value="100">
+            <button onclick="adj(2,10)" style="color:#fff; border:none; background:none;">+</button>
+        </div>
         <button id="btn-2" class="main-btn" onclick="handleBet(2)">BET</button>
     </div>
 </div>
 
 <div id="deposit-modal" class="modal">
     <div class="modal-content">
-        <h3>💰 Deposit Money</h3>
-        <p>Minimum Recharge: ₹100</p>
-        <button class="m-btn" style="background:#25D366; color:white;" onclick="window.open('https://wa.me/91XXXXXXXXXX?text=I+want+to+recharge')">Contact Admin on WhatsApp</button>
+        <h3>💰 Deposit</h3>
+        <button class="m-btn" style="background:#25D366; color:white;" onclick="window.open('https://wa.me/91XXXXXXXXXX?text=I+want+to+deposit')">WhatsApp Admin</button>
         <button class="m-btn" onclick="closeModals()">Close</button>
     </div>
-</div>
-
-<div id="side-menu">
-    <div onclick="openModal('deposit-modal')" style="padding:15px; border-bottom:1px solid #333;">Deposit</div>
-    <div onclick="localStorage.clear(); location.reload()" style="padding:15px; color:red;">Logout</div>
 </div>
 
 <script>
     const socket = io();
     
-    // --- Step 2: 0 Balance Logic ---
+    // Step 2: NEW USER = 0 BALANCE LOGIC
     let wallet = parseFloat(localStorage.getItem('aviator_bal'));
-    if (isNaN(wallet)) wallet = 0; // Hamesha 0 se shuru hoga
+    if (isNaN(wallet)) wallet = 0; // Hamesha 0 se start hoga
 
-    function startApp() {
-        let p = document.getElementById('reg-phone').value;
-        if(p.length < 10) return alert("Enter 10 digit number");
-        localStorage.setItem('user_logged', 'true');
-        document.getElementById('auth-overlay').style.display = 'none';
-        updateUI();
-    }
-
-    if(localStorage.getItem('user_logged')) {
+    function saveUser() {
+        let p = document.getElementById('u-phone').value;
+        if(p.length < 10) return alert("Enter valid phone");
+        localStorage.setItem('user_auth', 'true');
         document.getElementById('auth-overlay').style.display = 'none';
     }
 
-    // Admin approval se balance badhna
+    if(localStorage.getItem('user_auth')) {
+        document.getElementById('auth-overlay').style.display = 'none';
+    }
+
+    // Step 3: Admin Approval
     socket.on('depositApproved', (data) => {
         wallet += (data.amount + data.bonus);
         localStorage.setItem('aviator_bal', wallet);
-        updateUI();
+        updateBalance();
+        alert("Recharge Success!");
     });
 
-    function updateUI() {
+    function updateBalance() {
         document.getElementById('bal-text').innerText = wallet.toFixed(2);
     }
 
-    // --- AAPKA ORIGINAL GAME ENGINE ---
-    // (Yahan aapka canvas drawing aur startLoop ka pura code paste karein)
-    // Maine placeholders rakhe hain taaki aapka logic use ho sake
+    // --- AAPKA ORIGINAL SCRIPT LOGIC (Canvas, Plane, etc.) ---
+    // (Aap yahan apna purna canvas drawing aur loop paste karein)
     
-    function handleBet(p) {
-        let amt = parseInt(document.getElementById('amt-'+p).value);
-        if(amt > wallet) {
-            alert("Insufficient Balance! Please Recharge.");
-            return;
-        }
-        wallet -= amt;
-        localStorage.setItem('aviator_bal', wallet);
-        updateUI();
-        alert("Bet Placed!");
-    }
-
+    function adj(p, v) { let i = document.getElementById('amt-'+p); i.value = Math.max(10, parseInt(i.value) + v); }
     function toggleMenu() { const m = document.getElementById('side-menu'); m.style.right = (m.style.right === '0px') ? '-100%' : '0px'; }
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-
-    updateUI();
+    
+    updateBalance();
 </script>
 </body>
 </html>

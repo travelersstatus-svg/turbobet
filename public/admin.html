@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TurboBet Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { background: #0a0e17; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+        input { padding: 15px; width: 80%; border-radius: 8px; border: none; margin: 10px 0; font-size: 18px; }
+        button { padding: 15px 30px; background: #ff0055; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 85%; }
+        .card { background: #161d2b; padding: 20px; border-radius: 15px; border: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <h2>🚀 TurboBet Control</h2>
+    <div class="card">
+        <p>Enter Next Crash Point:</p>
+        <input type="number" id="point" placeholder="Example: 1.50" step="0.01">
+        <br>
+        <button onclick="setCrash()">SET CRASH POINT</button>
+        <p id="msg"></p>
+    </div>
+
+    <script>
+        function setCrash() {
+            let p = document.getElementById('point').value;
+            if(!p || p < 1) return alert("Please enter a valid number");
+            
+            fetch('/control/' + p)
+                .then(res => res.text())
+                .then(data => {
+                    document.getElementById('msg').innerText = "✅ Success: Agla crash " + p + "x par hoga!";
+                    document.getElementById('point').value = "";
+                });
+        }
+    </script>
+</body>
+</html>
+

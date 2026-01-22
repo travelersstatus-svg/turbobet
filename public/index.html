@@ -180,6 +180,55 @@
 <div id="history-modal" class="modal"><div class="modal-content"><h3>Your History</h3><div id="personal-history-list"></div><button class="m-btn" onclick="closeModals()">Close</button></div></div>
 
 <script>
+    // --- AUTH SYSTEM LOGIC START ---
+function toggleAuthTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
+    document.getElementById('form-register').style.display = isLogin ? 'none' : 'block';
+    
+    // UI Colors update
+    document.getElementById('tab-login').style.color = isLogin ? '#ff0055' : '#9ea0a3';
+    document.getElementById('tab-login').style.borderBottom = isLogin ? '3px solid #ff0055' : 'none';
+    document.getElementById('tab-register').style.color = isLogin ? '#9ea0a3' : '#ff0055';
+    document.getElementById('tab-register').style.borderBottom = isLogin ? 'none' : '3px solid #ff0055';
+}
+
+async function handleRegistration() {
+    const name = document.getElementById('reg-name').value;
+    const mobile = document.getElementById('reg-mobile').value;
+    const email = document.getElementById('reg-email').value;
+    const pass = document.getElementById('reg-pass').value;
+
+    if(!name || !mobile || !email || !pass) return alert("Bhai, saari details bharna zaroori hai!");
+
+    const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name, mobile, email, pass })
+    });
+    const result = await res.json();
+    alert(result.message);
+}
+
+async function handleLogin() {
+    const id = document.getElementById('login-id').value;
+    const pass = document.getElementById('login-pass').value;
+
+    const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ id, pass })
+    });
+    const result = await res.json();
+    
+    if(result.success) {
+        document.getElementById('auth-screen').style.display = 'none';
+        alert("Login Successful! Chalo game shuru karte hain.");
+    } else {
+        alert(result.message);
+    }
+}
+// --- AUTH SYSTEM LOGIC END ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const planeImg = new Image();

@@ -7,17 +7,6 @@
     <style>
         :root { --bg-dark: #0a0e17; --panel-bg: #161d2b; --win-green: #28a745; --accent-red: #d11348; --btn-orange: #d97706; --text-gray: #9ea0a3; }
         body { background: var(--bg-dark); color: white; font-family: sans-serif; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
-        </head>
-<body>
-
-<div id="auth-screen">
-   ... auth ka pura code ...
-</div>
-
-<div class="top-nav">
-   ...
-</div>
-...
         
         /* SIDE MENU & MODALS */
         #side-menu { position: fixed; top: 0; right: -100%; width: 85%; height: 100%; background: #0f1521; z-index: 5000; transition: 0.4s; padding: 20px; box-sizing: border-box; }
@@ -203,9 +192,9 @@
         document.getElementById('xp-text').innerText = currentXP;
         document.getElementById('level-progress').style.width = (currentXP / 10) + "%";
         
-        document.getElementById('hist-row').innerHTML = results.slice(0, 10).map(r => `<div class="hist-chip">${r}x</div>`).join('');
-        document.getElementById('full-history').innerHTML = results.map(r => `<span class="hist-chip" style="margin:2px">${r}x</span>`).join('');
-        document.getElementById('personal-history-list').innerHTML = myHistory.map(h => `<div class="live-row"><span>₹${h.amt}</span><span style="color:var(--win-green)">₹${h.win.toFixed(2)}</span><span>${h.mult}x</span></div>`).join('');
+        document.getElementById('hist-row').innerHTML = results.slice(0, 10).map(r => <div class="hist-chip">${r}x</div>).join('');
+        document.getElementById('full-history').innerHTML = results.map(r => <span class="hist-chip" style="margin:2px">${r}x</span>).join('');
+        document.getElementById('personal-history-list').innerHTML = myHistory.map(h => <div class="live-row"><span>₹${h.amt}</span><span style="color:var(--win-green)">₹${h.win.toFixed(2)}</span><span>${h.mult}x</span></div>).join('');
         
         [1,2].forEach(p => {
             let btn = document.getElementById('btn-'+p);
@@ -258,7 +247,7 @@
         let bots = "";
         for(let i=0; i<8; i++) {
             let bAmt = (Math.random()*2000 + 100).toFixed(0);
-            bots += `<div class="live-row"><span>User_${Math.floor(Math.random()*999)}</span><span>₹${bAmt}</span><span id="bot-${i}">-</span></div>`;
+            bots += <div class="live-row"><span>User_${Math.floor(Math.random()*999)}</span><span>₹${bAmt}</span><span id="bot-${i}">-</span></div>;
         }
         document.getElementById('live-list').innerHTML = bots;
 

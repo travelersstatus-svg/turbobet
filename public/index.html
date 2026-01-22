@@ -23,20 +23,20 @@
         #level-progress { width: 0%; background: #d97706; height: 100%; transition: 0.5s; }
         .level-info { font-size: 10px; padding: 4px 15px; color: #d97706; display: flex; justify-content: space-between; background: #0a0e17; border-bottom: 1px solid #252f44; }
 
-        /* HISTORY DROPDOWN */
+        /* HISTORY */
         .history-container { background: #080c14; padding: 8px; position: relative; }
         .history-strip { display: flex; gap: 8px; overflow: hidden; width: 85%; height: 25px; align-items: center; }
         .hist-chip { font-size: 11px; padding: 4px 10px; border-radius: 12px; background: #1c2538; color: #9d50ff; font-weight: bold; flex-shrink: 0; }
         #hist-toggle { position: absolute; right: 10px; top: 8px; background: #252f44; border-radius: 5px; padding: 2px 8px; cursor: pointer; z-index: 2100; }
         #full-history { display: none; position: absolute; top: 40px; left: 0; width: 100%; background: #161d2b; z-index: 2000; max-height: 200px; overflow-y: auto; padding: 10px; border-bottom: 2px solid #ff0055; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
 
-        /* GAME AREA */
+        /* GAME */
         .display-area { position: relative; height: 210px; background: radial-gradient(circle at bottom left, #1a2a44 0%, #05080f 70%); margin: 10px; border-radius: 15px; border: 1px solid #252f44; overflow: hidden; }
         #multiplier-text { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); font-size: 3.5rem; font-weight: 900; z-index: 10; }
         #flew-away { position: absolute; top: 30%; left: 50%; transform: translateX(-50%); color: #ff0055; font-size: 1.5rem; font-weight: bold; display: none; z-index: 11; }
         #countdown { position: absolute; bottom: 20px; width: 100%; text-align: center; color: var(--win-green); font-weight: bold; display: none; z-index: 12; }
 
-        /* BETTING PANELS */
+        /* BETTING */
         .bet-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
         .bet-card { background: var(--panel-bg); padding: 10px; border-radius: 15px; border: 1px solid #252f44; }
         .auto-row { display: flex; justify-content: space-between; align-items: center; font-size: 10px; margin-bottom: 5px; }
@@ -45,11 +45,8 @@
         .main-btn { width: 100%; height: 45px; margin-top: 8px; border: none; border-radius: 10px; font-weight: bold; color: white; cursor: pointer; background: var(--win-green); }
         .btn-cashout { background: var(--btn-orange); }
 
-        .live-section { margin: 10px; background: var(--panel-bg); border-radius: 15px; font-size: 11px; border: 1px solid #252f44; }
-        .live-row { display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 8px 12px; border-bottom: 1px solid #1a2233; }
-        
-        /* AUTH UI OVERLAY */
-        #auth-screen { position: fixed; inset: 0; background: #0a0e17; z-index: 10000; display: flex; flex-direction: column; padding: 20px; }
+        /* AUTH UI */
+        #auth-screen { position: fixed; inset: 0; background: #0a0e17; z-index: 10000; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
         .tab-bar { display: flex; margin-bottom: 25px; border-bottom: 1px solid #252f44; }
         .tab { flex: 1; padding: 15px; text-align: center; font-weight: bold; color: #9ea0a3; cursor: pointer; }
         .auth-input { background: #161d2b; border: 1px solid #252f44; padding: 15px; border-radius: 10px; color: white; margin-bottom: 15px; width: 100%; box-sizing: border-box; }
@@ -59,10 +56,7 @@
 <body>
 
 <div id="auth-screen">
-    <div style="text-align:center; padding: 30px 0;">
-        <h1 style="color:#ff0055; margin:0; font-size:35px;">AVIATOR</h1>
-        <p style="color:#9ea0a3; font-size:12px;">Sign in to start winning</p>
-    </div>
+    <div style="text-align:center; padding: 30px 0;"><h1 style="color:#ff0055; margin:0;">AVIATOR</h1></div>
     <div class="tab-bar">
         <div id="tab-login" class="tab" style="color:#ff0055; border-bottom:3px solid #ff0055" onclick="toggleAuthTab('login')">LOGIN</div>
         <div id="tab-register" class="tab" onclick="toggleAuthTab('register')">REGISTER</div>
@@ -81,78 +75,28 @@
     </div>
 </div>
 
-<div id="side-menu">
-    <div style="display:flex; justify-content:space-between; margin-bottom:30px;"><b>AVIATOR MENU</b> <span onclick="toggleMenu()">✕</span></div>
-    <div onclick="openModal('deposit-modal')" style="padding:15px 0; border-bottom:1px solid #222;">💰 Deposit</div>
-    <div onclick="openModal('withdraw-modal')" style="padding:15px 0; border-bottom:1px solid #222;">🏦 Withdrawal</div>
-    <div onclick="openModal('history-modal')" style="padding:15px 0; border-bottom:1px solid #222;">📊 Bet History</div>
-    <div onclick="localStorage.clear(); location.reload()" style="padding:15px 0; color:var(--accent-red);">🚪 Reset Game</div>
-</div>
-
 <div class="top-nav">
     <div style="color:#ff0055; font-weight:900; font-size:20px;">AVIATOR</div>
-    <div style="display:flex; flex-direction:column; align-items:flex-end;">
-        <div class="balance-box">₹<span id="bal-text">5000.00</span></div>
-        <div onclick="toggleMenu()" style="cursor:pointer; font-size:20px;">☰</div>
-    </div>
-</div>
-
-<div id="level-bar-container">
-    <div id="level-progress"></div>
-</div>
-<div class="level-info">
-    <span>RANK: <b id="lvl-text">1</b></span>
-    <span>XP: <b id="xp-text">0</b> / 1000</span>
-</div>
-
-<div class="history-container">
-    <div id="hist-row" class="history-strip"></div>
-    <div id="hist-toggle" onclick="toggleFullHist()">▼</div>
-    <div id="full-history"></div>
+    <div class="balance-box">₹<span id="bal-text">5000.00</span></div>
 </div>
 
 <div class="display-area">
     <div id="multiplier-text">1.00x</div>
     <div id="flew-away">FLEW AWAY!</div>
     <div id="countdown">NEXT ROUND IN 5s</div>
-    <div id="splash-layer"></div>
     <canvas id="gameCanvas" width="800" height="400" style="width:100%; height:100%;"></canvas>
 </div>
 
 <div class="bet-container">
     <div class="bet-card">
-        <div class="auto-row">
-            <label><input type="checkbox" id="auto-play-1"> Auto Play</label>
-            <label><input type="checkbox" id="auto-cash-tick-1"> Cash @<input type="number" id="auto-cash-val-1" value="1.30" step="0.1" style="width:35px; background:none; color:#fff; border:none;"></label>
-        </div>
-        <div class="input-box">
-            <button onclick="adj(1,-10)" style="color:#fff; border:none; background:none;">-</button>
-            <input type="number" id="amt-1" value="100">
-            <button onclick="adj(1,10)" style="color:#fff; border:none; background:none;">+</button>
-        </div>
+        <div class="input-box"><input type="number" id="amt-1" value="100"></div>
         <button id="btn-1" class="main-btn" onclick="handleBet(1)">BET</button>
     </div>
     <div class="bet-card">
-        <div class="auto-row">
-            <label><input type="checkbox" id="auto-play-2"> Auto Play</label>
-            <label><input type="checkbox" id="auto-cash-tick-2"> Cash @<input type="number" id="auto-cash-val-2" value="1.30" step="0.1" style="width:35px; background:none; color:#fff; border:none;"></label>
-        </div>
-        <div class="input-box">
-            <button onclick="adj(2,-10)" style="color:#fff; border:none; background:none;">-</button>
-            <input type="number" id="amt-2" value="100">
-            <button onclick="adj(2,10)" style="color:#fff; border:none; background:none;">+</button>
-        </div>
+        <div class="input-box"><input type="number" id="amt-2" value="100"></div>
         <button id="btn-2" class="main-btn" onclick="handleBet(2)">BET</button>
     </div>
 </div>
-
-<div class="live-section">
-    <div id="live-list"></div>
-</div>
-
-<div id="withdraw-modal" class="modal"><div class="modal-content"><h3>Withdraw</h3><button class="m-btn" onclick="closeModals()">Close</button></div></div>
-<div id="deposit-modal" class="modal"><div class="modal-content"><h3>Deposit</h3><button class="m-btn" onclick="closeModals()">Close</button></div></div>
-<div id="history-modal" class="modal"><div class="modal-content"><h3>Your History</h3><div id="personal-history-list"></div><button class="m-btn" onclick="closeModals()">Close</button></div></div>
 
 <script>
     // --- AUTH LOGIC ---
@@ -171,93 +115,62 @@
         const mobile = document.getElementById('reg-mobile').value;
         const email = document.getElementById('reg-email').value;
         const pass = document.getElementById('reg-pass').value;
-        if(!name || !email || !pass) return alert("All details are required!");
-        const res = await fetch('/api/register', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ name, mobile, email, pass })
-        });
-        const result = await res.json();
-        alert(result.message);
+        if(!name || !email || !pass) return alert("Fill all details!");
+        
+        try {
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, mobile, email, pass })
+            });
+            const result = await res.json();
+            alert(result.message);
+        } catch(e) { alert("Server Error"); }
     }
 
     async function handleLogin() {
         const id = document.getElementById('login-id').value;
         const pass = document.getElementById('login-pass').value;
         if(!id || !pass) return alert("Fill credentials!");
-        const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ id, pass })
-        });
-        const result = await res.json();
-        if(result.success) {
-            document.getElementById('auth-screen').style.display = 'none';
-        } else {
-            alert(result.message);
-        }
+        
+        try {
+            const res = await fetch('/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ id, pass })
+            });
+            const result = await res.json();
+            if(result.success) document.getElementById('auth-screen').style.display = 'none';
+            else alert(result.message);
+        } catch(e) { alert("Login failed"); }
     }
 
-    // --- ORIGINAL GAME LOGIC (Unchanged) ---
+    // --- GAME ENGINE ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const planeImg = new Image();
     planeImg.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjRjAwMDU1IiBkPSJNMjIuMyA0MjkuNmwyNC40IDYwLjFjLjkgMi4yIDMuMyAzLjMgNS41IDIuNGwxMzMuNS01MC42TDIyLjMgNDI5LjZ6TTQ4OC43IDU2LjNMMzguNyAzMTguM2MtOC44IDUuMS05IDE3LjctLjMgMjIuN0wyMTUuNyA0MTJsMjczLjEtMzI4LjZjMy0zLjYgMS40LTkuMi0zLjEtOS4zeiIvPjwvc3ZnPg==";
 
-    let wallet = parseFloat(localStorage.getItem('aviator_bal')) || 5000;
-    let xp = parseInt(localStorage.getItem('aviator_xp')) || 0;
-    let results = [1.2, 5.0, 1.02, 2.4, 1.8, 3.2, 1.1, 4.5, 2.0, 1.5];
-    let multiplier = 1.0, isFlying = false, canCashOut = false;
+    let wallet = 5000, multiplier = 1.0, isFlying = false, canCashOut = false;
     let activeBets = { 1: null, 2: null };
-    let nextBets = { 1: null, 2: null };
-    let myHistory = [];
-
-    function toggleMenu() { const m = document.getElementById('side-menu'); m.style.right = (m.style.right === '0px') ? '-100%' : '0px'; }
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-    function toggleFullHist() { 
-        const f = document.getElementById('full-history'); 
-        f.style.display = (f.style.display === 'block') ? 'none' : 'block'; 
-        document.getElementById('hist-toggle').innerText = (f.style.display === 'block') ? '▲' : '▼';
-    }
-    function adj(p, v) { let i = document.getElementById('amt-'+p); i.value = Math.max(10, parseInt(i.value) + v); }
 
     function updateUI() {
-        let level = Math.floor(xp / 1000) + 1;
-        let currentXP = xp % 1000;
-        localStorage.setItem('aviator_bal', wallet);
-        localStorage.setItem('aviator_xp', xp);
         document.getElementById('bal-text').innerText = wallet.toFixed(2);
-        document.getElementById('lvl-text').innerText = level;
-        document.getElementById('xp-text').innerText = currentXP;
-        document.getElementById('level-progress').style.width = (currentXP / 10) + "%";
-        document.getElementById('hist-row').innerHTML = results.slice(0, 10).map(r => <div class="hist-chip">${r}x</div>).join('');
         [1,2].forEach(p => {
             let btn = document.getElementById('btn-'+p);
-            if (!isFlying) {
-                if (activeBets[p]) { btn.innerText = "CANCEL"; btn.className = "main-btn btn-waiting"; }
-                else { btn.innerText = "BET"; btn.className = "main-btn"; }
-            } else {
-                if (activeBets[p] && !activeBets[p].cashed) { btn.innerText = "CASH OUT ₹"+(activeBets[p].amt * multiplier).toFixed(2); btn.className = "main-btn btn-cashout"; }
-            }
+            if (!isFlying) btn.innerText = activeBets[p] ? "CANCEL" : "BET";
+            else if (activeBets[p] && !activeBets[p].cashed) btn.innerText = "CASH OUT ₹"+(activeBets[p].amt * multiplier).toFixed(2);
         });
     }
 
     function handleBet(p) {
         let amt = parseInt(document.getElementById('amt-'+p).value);
-        if (isFlying) { if (activeBets[p] && !activeBets[p].cashed) cashOut(p); }
-        else {
+        if (isFlying && activeBets[p] && !activeBets[p].cashed) {
+            wallet += activeBets[p].amt * multiplier; activeBets[p].cashed = true;
+        } else if (!isFlying) {
             if (activeBets[p]) { wallet += activeBets[p].amt; activeBets[p] = null; }
             else if(amt <= wallet) { wallet -= amt; activeBets[p] = { amt, cashed: false }; }
-            updateUI();
         }
-    }
-
-    function cashOut(p) {
-        if (!activeBets[p] || activeBets[p].cashed || !canCashOut) return;
-        let win = activeBets[p].amt * multiplier; wallet += win; activeBets[p].cashed = true;
-        let splash = document.createElement('div'); splash.className = 'win-splash'; splash.innerText = "₹" + win.toFixed(2);
-        document.getElementById('splash-layer').appendChild(splash); setTimeout(() => splash.remove(), 1000);
         updateUI();
     }
 
@@ -272,7 +185,6 @@
             if(t <= 0) { clearInterval(timer); runFlight(); }
             t--;
         }, 1000);
-        updateUI();
     }
 
     function runFlight() {
@@ -282,9 +194,8 @@
         let crash = (1.0 + Math.pow(Math.random(), 3) * 15).toFixed(2);
         let loop = setInterval(() => {
             if (multiplier >= crash) {
-                clearInterval(loop); isFlying = false; canCashOut = false;
+                clearInterval(loop); isFlying = false;
                 document.getElementById('flew-away').style.display = 'block';
-                results.unshift(parseFloat(crash));
                 [1,2].forEach(p => activeBets[p] = null);
                 setTimeout(startLoop, 3000);
             } else {
@@ -297,11 +208,8 @@
 
     function draw() {
         ctx.clearRect(0,0,800,400);
-        let p = Math.min((multiplier-1)/15, 1);
-        let x = p*650+50, y = 350 - (Math.pow(p, 1.2)*300);
-        ctx.strokeStyle = "#ff0055"; ctx.lineWidth = 5; ctx.beginPath();
-        ctx.moveTo(0,400); ctx.quadraticCurveTo(x/2, 400, x, y); ctx.stroke();
-        ctx.drawImage(planeImg, x-25, y-25, 50, 50);
+        let x = (multiplier-1)*40 + 50, y = 350 - (multiplier-1)*20;
+        ctx.drawImage(planeImg, x, y, 50, 50);
     }
 
     startLoop();

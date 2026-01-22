@@ -180,56 +180,71 @@
 <div id="history-modal" class="modal"><div class="modal-content"><h3>Your History</h3><div id="personal-history-list"></div><button class="m-btn" onclick="closeModals()">Close</button></div></div>
 
 <script>
- // --- AUTH SYSTEM LOGIC START ---
+// --- AUTH SYSTEM LOGIC START ---
+
+// 1. Tabs Switch karne ke liye (Login <-> Register)
 function toggleAuthTab(tab) {
     const isLogin = (tab === 'login');
     document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
     document.getElementById('form-register').style.display = isLogin ? 'none' : 'block';
     
-    // UI Colors update
+    // Colors aur Borders update karne ke liye
     document.getElementById('tab-login').style.color = isLogin ? '#ff0055' : '#9ea0a3';
     document.getElementById('tab-login').style.borderBottom = isLogin ? '3px solid #ff0055' : 'none';
     document.getElementById('tab-register').style.color = isLogin ? '#9ea0a3' : '#ff0055';
     document.getElementById('tab-register').style.borderBottom = isLogin ? 'none' : '3px solid #ff0055';
 }
 
+// 2. Registration handle karne ke liye
 async function handleRegistration() {
     const name = document.getElementById('reg-name').value;
     const mobile = document.getElementById('reg-mobile').value;
     const email = document.getElementById('reg-email').value;
     const pass = document.getElementById('reg-pass').value;
 
-    if(!name || !mobile || !email || !pass) return alert("Please fill all details!");
+    if(!name || !mobile || !email || !pass) {
+        return alert("Sari details bharna zaroori hai!");
+    }
 
-    alert("Sending verification to: " + email);
-    // Backend call
-    const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ name, mobile, email, pass })
-    });
-    const result = await res.json();
-    alert(result.message);
+    alert("Verification link aapki email " + email + " par bheja ja raha hai...");
+    
+    // Backend API call (Jo hum index.js mein banayenge)
+    try {
+        const res = await fetch('/api/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ name, mobile, email, pass })
+        });
+        const result = await res.json();
+        alert(result.message);
+    } catch (err) {
+        console.error(err);
+    }
 }
 
+// 3. Login handle karne ke liye
 async function handleLogin() {
     const id = document.getElementById('login-id').value;
     const pass = document.getElementById('login-pass').value;
 
-    if(!id || !pass) return alert("Enter credentials!");
+    if(!id || !pass) return alert("Email aur Password dalein!");
 
-    const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ id, pass })
-    });
-    const result = await res.json();
-    
-    if(result.success) {
-        document.getElementById('auth-screen').style.display = 'none';
-        alert("Welcome to Aviator!");
-    } else {
-        alert(result.message);
+    try {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ id, pass })
+        });
+        const result = await res.json();
+        
+        if(result.success) {
+            document.getElementById('auth-screen').style.display = 'none'; // Auth screen hat jayegi
+            alert("Welcome! Aapka login safal raha.");
+        } else {
+            alert(result.message);
+        }
+    } catch (err) {
+        alert("Server error, thodi der baad koshish karein.");
     }
 }
 // --- AUTH SYSTEM LOGIC END ---

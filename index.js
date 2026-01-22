@@ -7,33 +7,33 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-let tempUsers = {}; // Temporary storage for OTP verification
+let tempUsers = {}; // OTP temporary storage
 
-// Registration - Step 1: Send OTP
+// 1. OTP Request
 app.post('/api/register-request', (req, res) => {
-    const { name, email, mobile, pass } = req.body;
-    const otp = Math.floor(100000 + Math.random() * 900000); // 6 Digit OTP
-    tempUsers[email] = { name, mobile, pass, otp };
+    const { email, name } = req.body;
+    const otp = Math.floor(100000 + Math.random() * 900000); 
+    tempUsers[email] = { ...req.body, otp };
     
-    console.log("OTP for " + email + " is: " + otp); // Testing ke liye console pe dikhega
-    res.json({ success: true, message: "Verification code sent to " + email });
+    // Yahan mail bhejne ka logic aayega (abhi console pe dikhega)
+    console.log("OTP for " + email + " is: " + otp); 
+    res.json({ success: true, message: "Code sent to " + email });
 });
 
-// Registration - Step 2: Verify OTP
+// 2. OTP Verify
 app.post('/api/verify-otp', (req, res) => {
     const { email, otp } = req.body;
     if (tempUsers[email] && tempUsers[email].otp == otp) {
-        // Yahan user permanent save hoga (Database logic)
-        delete tempUsers[email];
-        res.json({ success: true, message: "Registration Successful! Now Login." });
+        // Yahan aap Database save logic daal sakte hain
+        res.json({ success: true });
     } else {
         res.json({ success: false, message: "Invalid OTP!" });
     }
 });
 
 app.post('/api/login', (req, res) => {
-    res.json({ success: true, message: "Login Successful" });
+    res.json({ success: true });
 });
 
 const PORT = process.env.PORT || 3000;
-http.listen(PORT, () => { console.log("Server Live on " + PORT); });
+http.listen(PORT, () => { console.log("Server Running"); });

@@ -59,7 +59,42 @@
     </style>
 </head>
 <body>
+<div id="auth-screen" style="position:fixed; inset:0; background:#0a0e17; z-index:9999; display:flex; align-items:center; justify-content:center; overflow-y:auto; padding:20px;">
+    <div style="background:#161d2b; padding:25px; border-radius:20px; border:1px solid #ff0055; width:100%; max-width:400px; box-shadow: 0 0 20px rgba(255,0,85,0.2);">
+        
+        <div style="display:flex; margin-bottom:25px; border-bottom:1px solid #252f44; text-align:center;">
+            <div id="tab-login" onclick="toggleAuthTab('login')" style="flex:1; padding:12px; color:#ff0055; border-bottom:3px solid #ff0055; cursor:pointer; font-weight:bold;">LOGIN</div>
+            <div id="tab-register" onclick="toggleAuthTab('register')" style="flex:1; padding:12px; color:#9ea0a3; cursor:pointer; font-weight:bold;">REGISTER</div>
+        </div>
 
+        <div id="form-register" style="display:none;">
+            <h3 style="color:white; margin-bottom:15px; text-align:center;">Create Account</h3>
+            <input type="text" id="reg-name" class="auth-field" placeholder="Full Name">
+            <input type="number" id="reg-mobile" class="auth-field" placeholder="Mobile Number">
+            <input type="email" id="reg-email" class="auth-field" placeholder="Email ID">
+            <input type="password" id="reg-pass" class="auth-field" placeholder="Create Password">
+            <button onclick="handleRegistration()" class="auth-main-btn" style="background:#28a745;">SEND VERIFICATION LINK</button>
+        </div>
+
+        <div id="form-login">
+            <h3 style="color:white; margin-bottom:15px; text-align:center;">Welcome Back</h3>
+            <input type="text" id="login-id" class="auth-field" placeholder="Email or Mobile">
+            <input type="password" id="login-pass" class="auth-field" placeholder="Password">
+            <button onclick="handleLogin()" class="auth-main-btn" style="background:#ff0055;">LOGIN</button>
+            <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:12px;">
+                <span onclick="handleForgot()" style="color:#9ea0a3; cursor:pointer;">Forgot Password?</span>
+                <span onclick="resendEmail()" style="color:#ff0055; cursor:pointer;">Resend Email?</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-field { width:100%; padding:14px; margin:10px 0; background:#000; border:1px solid #252f44; color:white; border-radius:12px; box-sizing:border-box; outline:none; font-size:16px; }
+    .auth-field:focus { border-color: #ff0055; }
+    .auth-main-btn { width:100%; padding:15px; border:none; color:white; font-weight:bold; border-radius:12px; cursor:pointer; margin-top:10px; font-size:16px; transition: 0.3s; }
+    .auth-main-btn:active { transform: scale(0.98); }
+</style>
 <div id="side-menu">
     <div style="display:flex; justify-content:space-between; margin-bottom:30px;"><b>AVIATOR MENU</b> <span onclick="toggleMenu()">✕</span></div>
     <div onclick="openModal('deposit-modal')" style="padding:15px 0; border-bottom:1px solid #222;">💰 Deposit</div>

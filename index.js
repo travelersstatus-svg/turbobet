@@ -5,40 +5,26 @@ const io = require('socket.io')(http);
 
 // --- 1. Middlewares ---
 app.use(express.static('public'));
-app.use(express.json()); // Ye line zaroori hai JSON data samajhne ke liye
+app.use(express.json()); 
 
 // --- 2. Auth API Endpoints ---
-
-// User Registration
 app.post('/api/register', (req, res) => {
-    const { name, email, mobile, pass } = req.body;
-    console.log("New Registration Request:", name, email);
-    
-    // Testing ke liye success message (Kal database aur email add karenge)
-    res.json({ 
-        success: true, 
-        message: Namaste ${name}! Verification link aapki email (${email}) par bhej diya gaya hai. 
-    });
+    const { name, email } = req.body;
+    console.log("New User:", name);
+    res.json({ success: true, message: Verification link sent to ${email} });
 });
 
-// User Login
 app.post('/api/login', (req, res) => {
-    const { id, pass } = req.body;
-    if (id && pass) {
-        res.json({ success: true, message: "Login Successful!" });
-    } else {
-        res.json({ success: false, message: "Details adhuri hain!" });
-    }
+    res.json({ success: true, message: "Login Successful!" });
 });
 
 // --- 3. Game Logic (Socket.io) ---
 io.on('connection', (socket) => {
-    console.log('User connected to game');
-    // Aapka purana crash logic yahan chalega
+    console.log('User connected');
 });
 
-// --- 4. Server Port Setup ---
+// --- 4. Server Start ---
 const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
-    console.log(Server is running live on port ${PORT});
+    console.log('Server is live!');
 });

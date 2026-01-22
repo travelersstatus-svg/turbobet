@@ -5,37 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Aviator Pro Max</title>
     <style>
+        /* --- AAPKA ORIGINAL CSS --- */
         :root { --bg-dark: #0a0e17; --panel-bg: #161d2b; --win-green: #28a745; --accent-red: #d11348; --btn-orange: #d97706; --text-gray: #9ea0a3; }
         body { background: var(--bg-dark); color: white; font-family: sans-serif; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
         
-        /* --- LOGIN/REGISTRATION OVERLAY --- */
+        /* LOGIN/REGISTRATION UI */
         #auth-screen { position: fixed; inset: 0; background: #0a0e17; z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .auth-box { background: var(--panel-bg); padding: 30px; border-radius: 20px; border: 1px solid #252f44; width: 100%; max-width: 400px; }
+        .auth-box { background: var(--panel-bg); padding: 30px; border-radius: 20px; border: 1px solid #252f44; width: 100%; max-width: 400px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 1px solid #252f44; }
-        .auth-tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; color: var(--text-gray); font-weight: bold; }
+        .auth-tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; color: var(--text-gray); font-weight: bold; transition: 0.3s; }
         .auth-tab.active { color: #ff0055; border-bottom: 3px solid #ff0055; }
-        .auth-input { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #252f44; color: #fff; border-radius: 10px; box-sizing: border-box; }
+        .auth-input { width: 100%; padding: 15px; margin: 10px 0; background: #000; border: 1px solid #252f44; color: #fff; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
         .auth-btn { width: 100%; padding: 15px; background: #ff0055; border: none; color: #fff; font-weight: bold; border-radius: 10px; cursor: pointer; font-size: 16px; margin-top: 10px; }
 
-        /* --- YOUR ORIGINAL GAME UI (HIDDEN UNTIL LOGIN) --- */
+        /* GAME UI (HIDDEN UNTIL LOGIN) */
         #game-ui { display: none; }
 
-        /* YOUR ORIGINAL STYLES */
+        /* SIDE MENU & MODALS */
         #side-menu { position: fixed; top: 0; right: -100%; width: 85%; height: 100%; background: #0f1521; z-index: 5000; transition: 0.4s; padding: 20px; box-sizing: border-box; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 6000; display: none; align-items: center; justify-content: center; }
         .modal-content { background: var(--panel-bg); padding: 20px; border-radius: 15px; width: 90%; border: 1px solid #333; }
+        
+        /* TOP NAV & BALANCE */
         .top-nav { background: #0f1521; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #252f44; }
         .balance-box { background: #000; border: 1px solid var(--win-green); padding: 5px 15px; border-radius: 20px; color: var(--win-green); font-weight: bold; }
+        
+        /* RANK & XP */
+        #level-bar-container { width: 100%; background: #1a2233; height: 5px; }
+        #level-progress { width: 30%; background: #d97706; height: 100%; transition: 0.5s; }
+        .level-info { font-size: 10px; padding: 4px 15px; color: #d97706; display: flex; justify-content: space-between; background: #0a0e17; }
+
+        /* DISPLAY AREA */
         .display-area { position: relative; height: 210px; background: radial-gradient(circle at bottom left, #1a2a44 0%, #05080f 70%); margin: 10px; border-radius: 15px; border: 1px solid #252f44; overflow: hidden; }
-        #multiplier-text { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); font-size: 3.5rem; font-weight: 900; z-index: 10; }
+        #multiplier-text { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); font-size: 3.5rem; font-weight: 900; z-index: 10; color: white; }
         #flew-away { position: absolute; top: 30%; left: 50%; transform: translateX(-50%); color: #ff0055; font-size: 1.5rem; font-weight: bold; display: none; z-index: 11; }
         #countdown { position: absolute; bottom: 20px; width: 100%; text-align: center; color: var(--win-green); font-weight: bold; display: none; z-index: 12; }
+
+        /* BETTING CONTROLS */
         .bet-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
         .bet-card { background: var(--panel-bg); padding: 10px; border-radius: 15px; border: 1px solid #252f44; }
         .input-box { background: #000; border: 1px solid #444; border-radius: 20px; display: flex; justify-content: space-between; padding: 4px 10px; align-items: center; }
         .input-box input { background: none; border: none; color: #fff; width: 50px; text-align: center; font-weight: bold; }
         .main-btn { width: 100%; height: 45px; margin-top: 8px; border: none; border-radius: 10px; font-weight: bold; color: white; cursor: pointer; background: var(--win-green); }
-        .history-strip { display: flex; gap: 8px; overflow: hidden; padding: 10px; }
+        .btn-cashout { background: var(--btn-orange); }
+
+        /* HISTORY */
+        .history-strip { display: flex; gap: 8px; overflow: hidden; padding: 10px; background: #080c14; }
         .hist-chip { font-size: 11px; padding: 4px 10px; border-radius: 12px; background: #1c2538; color: #9d50ff; font-weight: bold; }
     </style>
 </head>
@@ -44,21 +59,24 @@
 <div id="auth-screen">
     <div class="auth-box">
         <div class="auth-tabs">
-            <div id="t-login" class="auth-tab active" onclick="showAuth('login')">LOGIN</div>
-            <div id="t-reg" class="auth-tab" onclick="showAuth('reg')">REGISTER</div>
+            <div id="tab-login" class="auth-tab active" onclick="toggleAuthTab('login')">LOGIN</div>
+            <div id="tab-register" class="auth-tab" onclick="toggleAuthTab('register')">REGISTER</div>
         </div>
 
-        <div id="login-form">
-            <input type="text" id="l-email" class="auth-input" placeholder="Email">
-            <input type="password" id="l-pass" class="auth-input" placeholder="Password">
-            <button class="auth-btn" onclick="handleLogin()">LOGIN</button>
+        <div id="form-login">
+            <input type="text" id="login-email" class="auth-input" placeholder="Email Address">
+            <input type="password" id="login-pass" class="auth-input" placeholder="Password">
+            <button class="auth-btn" onclick="handleLogin()">SIGN IN</button>
         </div>
 
-        <div id="reg-form" style="display:none;">
-            <input type="text" id="r-email" class="auth-input" placeholder="Email">
-            <input type="password" id="r-pass" class="auth-input" placeholder="Password">
-            <div id="otp-div" style="display:none;"><input type="text" id="r-otp" class="auth-input" placeholder="Enter OTP"></div>
-            <button id="reg-btn" class="auth-btn" onclick="handleReg()">SEND OTP</button>
+        <div id="form-register" style="display:none;">
+            <input type="text" id="reg-name" class="auth-input" placeholder="Full Name">
+            <input type="email" id="reg-email" class="auth-input" placeholder="Email Address">
+            <input type="password" id="reg-pass" class="auth-input" placeholder="Set Password">
+            <div id="otp-section" style="display:none;">
+                <input type="number" id="reg-otp" class="auth-input" placeholder="Enter OTP (See Server Logs)" style="border-color:#ff0055;">
+            </div>
+            <button id="reg-btn-main" class="auth-btn" onclick="handleRegistration()">GET OTP</button>
         </div>
     </div>
 </div>
@@ -68,13 +86,19 @@
         <div style="color:#ff0055; font-weight:900; font-size:20px;">AVIATOR</div>
         <div class="balance-box">₹<span id="bal-text">5000.00</span></div>
     </div>
+
+    <div id="level-bar-container"><div id="level-progress"></div></div>
+    <div class="level-info"><span>RANK: 1</span><span>XP: 0 / 1000</span></div>
+
     <div id="hist-row" class="history-strip"></div>
+
     <div class="display-area">
         <div id="multiplier-text">1.00x</div>
         <div id="flew-away">FLEW AWAY!</div>
         <div id="countdown">NEXT ROUND IN 5s</div>
         <canvas id="gameCanvas" width="800" height="400" style="width:100%; height:100%;"></canvas>
     </div>
+
     <div class="bet-container">
         <div class="bet-card">
             <div class="input-box"><input type="number" id="amt-1" value="100"></div>
@@ -88,52 +112,75 @@
 </div>
 
 <script>
-    // --- AUTH LOGIC ---
-    let otpSent = false;
-    function showAuth(type) {
-        document.getElementById('login-form').style.display = type === 'login' ? 'block' : 'none';
-        document.getElementById('reg-form').style.display = type === 'reg' ? 'block' : 'none';
-        document.getElementById('t-login').className = 'auth-tab ' + (type === 'login' ? 'active' : '');
-        document.getElementById('t-reg').className = 'auth-tab ' + (type === 'reg' ? 'active' : '');
+    // --- AUTHENTICATION LOGIC (FIXED) ---
+    let isOtpSent = false;
+
+    function toggleAuthTab(tab) {
+        const isLogin = (tab === 'login');
+        document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
+        document.getElementById('form-register').style.display = isLogin ? 'none' : 'block';
+        document.getElementById('tab-login').classList.toggle('active', isLogin);
+        document.getElementById('tab-register').classList.toggle('active', !isLogin);
     }
 
-    async function handleReg() {
-        const email = document.getElementById('r-email').value;
-        const pass = document.getElementById('r-pass').value;
-        if(!otpSent) {
-            const res = await fetch('/api/register-request', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, pass}) });
-            alert("OTP Sent to Server Log!");
-            document.getElementById('otp-div').style.display = 'block';
-            document.getElementById('reg-btn').innerText = "VERIFY & REGISTER";
-            otpSent = true;
-        } else {
-            const otp = document.getElementById('r-otp').value;
-            const res = await fetch('/api/verify-otp', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, otp}) });
+    async function handleRegistration() {
+        const name = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const pass = document.getElementById('reg-pass').value;
+
+        if (!isOtpSent) {
+            const res = await fetch('/api/register-request', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, email, pass })
+            });
             const data = await res.json();
-            if(data.success) { alert("Registration Success! Please Login."); showAuth('login'); }
-            else alert("Invalid OTP");
+            alert(data.message);
+            document.getElementById('otp-section').style.display = 'block';
+            document.getElementById('reg-btn-main').innerText = "VERIFY OTP";
+            isOtpSent = true;
+        } else {
+            const otp = document.getElementById('reg-otp').value;
+            const res = await fetch('/api/verify-otp', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ email, otp })
+            });
+            const data = await res.json();
+            if(data.success) {
+                alert("Success! Now Sign In.");
+                toggleAuthTab('login');
+            } else { alert("Invalid OTP!"); }
         }
     }
 
     async function handleLogin() {
-        const email = document.getElementById('l-email').value;
-        const pass = document.getElementById('l-pass').value;
-        const res = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, pass}) });
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-pass').value;
+
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ email, pass })
+        });
         const data = await res.json();
+
         if(data.success) {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('game-ui').style.display = 'block';
-            startLoop(); // GAME STARTS ONLY AFTER LOGIN
-        } else { alert("Login failed! Please register first."); }
+            startLoop(); // Starts your original game engine
+        } else {
+            alert("Login Failed! Please register first.");
+        }
     }
 
-    // --- YOUR ORIGINAL GAME ENGINE ---
+    // --- YOUR ORIGINAL GAME ENGINE (PLANE/MULTIPLIER) ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const planeImg = new Image();
     planeImg.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjRjAwMDU1IiBkPSJNMjIuMyA0MjkuNmwyNC40IDYwLjFjLjkgMi4yIDMuMyAzLjMgNS41IDIuNGwxMzMuNS01MC42TDIyLjMgNDI5LjZ6TTQ4OC43IDU2LjNMMzguNyAzMTguM2MtOC44IDUuMS05IDE3LjctLjMgMjIuN0wyMTUuNyA0MTJsMjczLjEtMzI4LjZjMy0zLjYgMS40LTkuMi0zLjEtOS4zeiIvPjwvc3ZnPg==";
 
-    let wallet = 5000, multiplier = 1.0, isFlying = false, results = [1.2, 3.5];
+    let wallet = 5000, multiplier = 1.0, isFlying = false, results = [1.5, 2.1, 1.08];
     let activeBets = { 1: null, 2: null };
 
     function updateUI() {
@@ -147,7 +194,7 @@
             wallet -= amt; activeBets[p] = { amt, cashed: false };
             updateUI();
         } else if(isFlying && activeBets[p] && !activeBets[p].cashed) {
-            wallet += activeBets[p].amt * multiplier; activeBets[p].cashed = true;
+            wallet += (activeBets[p].amt * multiplier); activeBets[p].cashed = true;
             updateUI();
         }
     }
@@ -191,6 +238,8 @@
         let x = (multiplier-1)*150 + 50, y = 350 - (multiplier-1)*80;
         ctx.drawImage(planeImg, x, y, 50, 50);
     }
+
+    // IMPORTANT: startLoop() is only called after login!
 </script>
 </body>
 </html>

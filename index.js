@@ -5,14 +5,14 @@ const io = require('socket.io')(http);
 
 // --- MIDDLEWARES ---
 app.use(express.static('public'));
-app.use(express.json()); 
+app.use(express.json()); // JSON data receive karne ke liye zaroori hai
 
 // --- AUTH API ENDPOINTS ---
 
 // 1. Registration API
 app.post('/api/register', (req, res) => {
     const { name, email } = req.body;
-    console.log("New Registration Attempt:", name, email);
+    console.log("Naya User:", name, email);
     res.json({ 
         success: true, 
         message: Namaste ${name}! Verification link aapki email (${email}) par bhej diya gaya hai. 
@@ -29,12 +29,9 @@ app.post('/api/login', (req, res) => {
     }
 });
 
-// --- GAME LOGIC (Purana Logic) ---
-let nextCrashPoint = null;
-
+// --- GAME LOGIC (Socket.io) ---
 io.on('connection', (socket) => {
     console.log('A user connected');
-    // Aapka purana socket logic yahan rahega
 });
 
 const PORT = process.env.PORT || 3000;

@@ -3,38 +3,42 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-// --- MIDDLEWARES ---
+// --- 1. Middlewares ---
 app.use(express.static('public'));
-app.use(express.json()); // JSON data receive karne ke liye zaroori hai
+app.use(express.json()); // Ye line zaroori hai JSON data samajhne ke liye
 
-// --- AUTH API ENDPOINTS ---
+// --- 2. Auth API Endpoints ---
 
-// 1. Registration API
+// User Registration
 app.post('/api/register', (req, res) => {
-    const { name, email } = req.body;
-    console.log("Naya User:", name, email);
+    const { name, email, mobile, pass } = req.body;
+    console.log("New Registration Request:", name, email);
+    
+    // Testing ke liye success message (Kal database aur email add karenge)
     res.json({ 
         success: true, 
         message: Namaste ${name}! Verification link aapki email (${email}) par bhej diya gaya hai. 
     });
 });
 
-// 2. Login API
+// User Login
 app.post('/api/login', (req, res) => {
     const { id, pass } = req.body;
     if (id && pass) {
         res.json({ success: true, message: "Login Successful!" });
     } else {
-        res.json({ success: false, message: "Details bhariye!" });
+        res.json({ success: false, message: "Details adhuri hain!" });
     }
 });
 
-// --- GAME LOGIC (Socket.io) ---
+// --- 3. Game Logic (Socket.io) ---
 io.on('connection', (socket) => {
-    console.log('A user connected');
+    console.log('User connected to game');
+    // Aapka purana crash logic yahan chalega
 });
 
+// --- 4. Server Port Setup ---
 const PORT = process.env.PORT || 3000;
 http.listen(PORT, () => {
-    console.log(Server running on port ${PORT});
+    console.log(Server is running live on port ${PORT});
 });

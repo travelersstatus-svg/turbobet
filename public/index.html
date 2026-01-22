@@ -63,7 +63,38 @@
     <div style="background:#161d2b; padding:25px; border-radius:20px; border:1px solid #ff0055; width:100%; max-width:400px; box-shadow: 0 0 20px rgba(255,0,85,0.2);">
         
         <div style="display:flex; margin-bottom:25px; border-bottom:1px solid #252f44; text-align:center;">
-            <div id="tab-login" onclick="toggleAuthTab('login')" style="flex:1; padding:12px; color:#ff0055; border-bottom:3px solid #ff0055; cursor:pointer; font-weight:bold;">LOGIN</div>
+            <div id="tab-login" onclick="toggleAuthTab
+                async function handleRegistration() {
+    const name = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
+    const mobile = document.getElementById('reg-mobile').value;
+    const pass = document.getElementById('reg-pass').value;
+
+    if(!name || !email) return alert("Details bhariye!");
+
+    const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ name, email, mobile, pass })
+    });
+    const result = await res.json();
+    alert(result.message);
+}
+
+async function handleLogin() {
+    const id = document.getElementById('login-id').value;
+    const pass = document.getElementById('login-pass').value;
+    const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ id, pass })
+    });
+    const result = await res.json();
+    if(result.success) document.getElementById('auth-screen').style.display = 'none';
+    else alert(result.message);
+}
+                
+                ('login')" style="flex:1; padding:12px; color:#ff0055; border-bottom:3px solid #ff0055; cursor:pointer; font-weight:bold;">LOGIN</div>
             <div id="tab-register" onclick="toggleAuthTab('register')" style="flex:1; padding:12px; color:#9ea0a3; cursor:pointer; font-weight:bold;">REGISTER</div>
         </div>
 

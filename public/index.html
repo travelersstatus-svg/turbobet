@@ -180,54 +180,43 @@
 <div id="history-modal" class="modal"><div class="modal-content"><h3>Your History</h3><div id="personal-history-list"></div><button class="m-btn" onclick="closeModals()">Close</button></div></div>
 
 <script>
-// --- AUTH SYSTEM LOGIC START ---
-
-// 1. Tabs Switch karne ke liye (Login <-> Register)
+// --- AUTH FRONTEND LOGIC (PURANA HATA KAR ISE DALEIN) ---
 function toggleAuthTab(tab) {
     const isLogin = (tab === 'login');
     document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
     document.getElementById('form-register').style.display = isLogin ? 'none' : 'block';
     
-    // Colors aur Borders update karne ke liye
+    // UI update logic
     document.getElementById('tab-login').style.color = isLogin ? '#ff0055' : '#9ea0a3';
     document.getElementById('tab-login').style.borderBottom = isLogin ? '3px solid #ff0055' : 'none';
     document.getElementById('tab-register').style.color = isLogin ? '#9ea0a3' : '#ff0055';
     document.getElementById('tab-register').style.borderBottom = isLogin ? 'none' : '3px solid #ff0055';
 }
 
-// 2. Registration handle karne ke liye
 async function handleRegistration() {
     const name = document.getElementById('reg-name').value;
     const mobile = document.getElementById('reg-mobile').value;
     const email = document.getElementById('reg-email').value;
     const pass = document.getElementById('reg-pass').value;
 
-    if(!name || !mobile || !email || !pass) {
-        return alert("Sari details bharna zaroori hai!");
-    }
+    if(!name || !email || !pass) return alert("Sari details bhariye!");
 
-    alert("Verification link aapki email " + email + " par bheja ja raha hai...");
-    
-    // Backend API call (Jo hum index.js mein banayenge)
     try {
         const res = await fetch('/api/register', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ name, mobile, email, pass })
+            body: JSON.stringify({ name, email, mobile, pass })
         });
         const result = await res.json();
         alert(result.message);
-    } catch (err) {
-        console.error(err);
-    }
+    } catch (err) { alert("Server connection failed!"); }
 }
 
-// 3. Login handle karne ke liye
 async function handleLogin() {
     const id = document.getElementById('login-id').value;
     const pass = document.getElementById('login-pass').value;
 
-    if(!id || !pass) return alert("Email aur Password dalein!");
+    if(!id || !pass) return alert("Details dalein!");
 
     try {
         const res = await fetch('/api/login', {
@@ -236,18 +225,15 @@ async function handleLogin() {
             body: JSON.stringify({ id, pass })
         });
         const result = await res.json();
-        
         if(result.success) {
-            document.getElementById('auth-screen').style.display = 'none'; // Auth screen hat jayegi
-            alert("Welcome! Aapka login safal raha.");
+            document.getElementById('auth-screen').style.display = 'none';
+            alert("Login Safal!");
         } else {
             alert(result.message);
         }
-    } catch (err) {
-        alert("Server error, thodi der baad koshish karein.");
-    }
+    } catch (err) { alert("Error connecting to server!"); }
 }
-// --- AUTH SYSTEM LOGIC END ---
+// --- AUTH LOGIC END ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const planeImg = new Image();

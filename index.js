@@ -14,7 +14,7 @@ app.post('/api/register', (req, res) => {
     // Yahan Backticks (`) ka sahi use kiya gaya hai
     res.json({ 
         success: true, 
-        message: "Hi " + name + "! Verification link sent to " + email 
+        message: "Namaste  " +name + "! Verification link sent to. ". 
     });
 });
 

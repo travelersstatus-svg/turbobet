@@ -1,209 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aviator Pro Max</title>
-    <style>
-        :root { --bg-dark: #0a0e17; --panel-bg: #161d2b; --win-green: #28a745; --accent-red: #d11348; --btn-orange: #d97706; --text-gray: #9ea0a3; }
-        body { background: var(--bg-dark); color: white; font-family: sans-serif; margin: 0; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; }
-        
-        /* AUTH SCREEN STYLES */
-        #auth-screen { position: fixed; inset: 0; background: #0a0e17; z-index: 10000; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; }
-        .auth-tabs { display: flex; margin-bottom: 25px; border-bottom: 1px solid #252f44; }
-        .auth-tab { flex: 1; padding: 15px; text-align: center; color: #9ea0a3; cursor: pointer; font-weight: bold; }
-        .auth-tab.active { color: #ff0055; border-bottom: 3px solid #ff0055; }
-        .auth-input { background: #161d2b; border: 1px solid #252f44; padding: 15px; border-radius: 10px; color: white; margin-bottom: 15px; width: 100%; box-sizing: border-box; }
-        .auth-btn { background: #ff0055; color: white; padding: 15px; border-radius: 10px; border: none; font-weight: bold; width: 100%; cursor: pointer; }
+const express = require('express');
+const app = express();
+const http = require('http').Server(app);
+const cors = require('cors');
 
-        /* SIDE MENU & MODALS */
-        #side-menu { position: fixed; top: 0; right: -100%; width: 85%; height: 100%; background: #0f1521; z-index: 5000; transition: 0.4s; padding: 20px; box-sizing: border-box; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 6000; display: none; align-items: center; justify-content: center; }
-        .modal-content { background: var(--panel-bg); padding: 20px; border-radius: 15px; width: 90%; border: 1px solid #333; }
-        .m-btn { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
 
-        /* TOP NAV */
-        .top-nav { background: #0f1521; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #252f44; }
-        .balance-box { background: #000; border: 1px solid var(--win-green); padding: 5px 15px; border-radius: 20px; color: var(--win-green); font-weight: bold; }
+let tempUsers = {}; 
 
-        /* LEVEL BAR */
-        #level-bar-container { width: 100%; background: #1a2233; height: 5px; position: relative; }
-        #level-progress { width: 0%; background: #d97706; height: 100%; transition: 0.5s; }
-        .level-info { font-size: 10px; padding: 4px 15px; color: #d97706; display: flex; justify-content: space-between; background: #0a0e17; border-bottom: 1px solid #252f44; }
+app.post('/api/register-request', (req, res) => {
+    const email = req.body.email;
+    const otp = Math.floor(100000 + Math.random() * 900000); 
+    tempUsers[email] = { ...req.body, otp: otp };
+    
+    console.log("OTP for " + email + " is: " + otp); 
+    res.json({ success: true, message: "OTP sent to " + email });
+});
 
-        /* HISTORY DROPDOWN */
-        .history-container { background: #080c14; padding: 8px; position: relative; }
-        .history-strip { display: flex; gap: 8px; overflow: hidden; width: 85%; height: 25px; align-items: center; }
-        .hist-chip { font-size: 11px; padding: 4px 10px; border-radius: 12px; background: #1c2538; color: #9d50ff; font-weight: bold; flex-shrink: 0; }
-        #hist-toggle { position: absolute; right: 10px; top: 8px; background: #252f44; border-radius: 5px; padding: 2px 8px; cursor: pointer; z-index: 2100; }
-        #full-history { display: none; position: absolute; top: 40px; left: 0; width: 100%; background: #161d2b; z-index: 2000; max-height: 200px; overflow-y: auto; padding: 10px; border-bottom: 2px solid #ff0055; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-
-        /* GAME */
-        .display-area { position: relative; height: 210px; background: radial-gradient(circle at bottom left, #1a2a44 0%, #05080f 70%); margin: 10px; border-radius: 15px; border: 1px solid #252f44; overflow: hidden; }
-        #multiplier-text { position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); font-size: 3.5rem; font-weight: 900; z-index: 10; }
-        #flew-away { position: absolute; top: 30%; left: 50%; transform: translateX(-50%); color: #ff0055; font-size: 1.5rem; font-weight: bold; display: none; z-index: 11; }
-        #countdown { position: absolute; bottom: 20px; width: 100%; text-align: center; color: var(--win-green); font-weight: bold; display: none; z-index: 12; }
-
-        /* BETTING PANELS */
-        .bet-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
-        .bet-card { background: var(--panel-bg); padding: 10px; border-radius: 15px; border: 1px solid #252f44; }
-        .auto-row { display: flex; justify-content: space-between; align-items: center; font-size: 10px; margin-bottom: 5px; }
-        .presets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin: 5px 0; }
-        .p-btn { background: #000; border: 1px solid #333; color: white; font-size: 10px; padding: 4px; border-radius: 5px; }
-        .input-box { background: #000; border: 1px solid #444; border-radius: 20px; display: flex; justify-content: space-between; padding: 4px 10px; align-items: center; }
-        .input-box input { background: none; border: none; color: #fff; width: 50px; text-align: center; font-weight: bold; }
-        .main-btn { width: 100%; height: 45px; margin-top: 8px; border: none; border-radius: 10px; font-weight: bold; color: white; cursor: pointer; background: var(--win-green); }
-        .btn-cashout { background: var(--btn-orange); }
-        .btn-waiting { background: #333; color: #f1c40f; }
-
-        .win-splash { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--win-green); font-size: 2rem; font-weight: 900; animation: splash 1s forwards; z-index: 100; pointer-events: none; }
-        @keyframes splash { 0% { opacity:0; scale:0.5; } 50% { opacity:1; scale:1.2; } 100% { opacity:0; transform: translate(-50%, -150%); } }
-
-        /* LIVE LIST */
-        .live-section { margin: 10px; background: var(--panel-bg); border-radius: 15px; font-size: 11px; border: 1px solid #252f44; }
-        .live-row { display: grid; grid-template-columns: 2fr 1fr 1fr; padding: 8px 12px; border-bottom: 1px solid #1a2233; }
-    </style>
-</head>
-<body>
-
-<div id="auth-screen">
-    <div style="text-align:center; padding: 30px 0;"><h1 style="color:#ff0055; margin:0;">AVIATOR</h1></div>
-    <div class="auth-tabs">
-        <div id="tab-login" class="auth-tab active" onclick="toggleAuthTab('login')">LOGIN</div>
-        <div id="tab-register" class="auth-tab" onclick="toggleAuthTab('register')">REGISTER</div>
-    </div>
-    <div id="form-login">
-        <input type="text" id="login-id" class="auth-input" placeholder="Mobile or Email">
-        <input type="password" id="login-pass" class="auth-input" placeholder="Password">
-        <button class="auth-btn" onclick="handleLogin()">SIGN IN</button>
-    </div>
-    <div id="form-register" style="display:none">
-        <input type="text" id="reg-name" class="auth-input" placeholder="Full Name">
-        <input type="email" id="reg-email" class="auth-input" placeholder="Email Address">
-        <input type="password" id="reg-pass" class="auth-input" placeholder="Set Password">
-        <div id="otp-section" style="display:none">
-            <input type="number" id="reg-otp" class="auth-input" placeholder="Enter 6-Digit Code" style="border:1px solid #ff0055">
-        </div>
-        <button id="reg-btn-main" class="auth-btn" onclick="handleRegistration()">GET VERIFICATION CODE</button>
-    </div>
-</div>
-
-<div id="game-ui" style="display:none">
-    <div class="top-nav">
-        <div style="color:#ff0055; font-weight:900; font-size:20px;">AVIATOR</div>
-        <div class="balance-box">₹<span id="bal-text">5000.00</span></div>
-    </div>
-    <div class="display-area">
-        <div id="multiplier-text">1.00x</div>
-        <div id="flew-away">FLEW AWAY!</div>
-        <div id="countdown">NEXT ROUND IN 5s</div>
-        <div id="splash-layer"></div>
-        <canvas id="gameCanvas" width="800" height="400" style="width:100%; height:100%;"></canvas>
-    </div>
-
-    <div class="bet-container">
-        <div class="bet-card">
-            <div class="input-box"><input type="number" id="amt-1" value="100"></div>
-            <button id="btn-1" class="main-btn" onclick="handleBet(1)">BET</button>
-        </div>
-        <div class="bet-card">
-            <div class="input-box"><input type="number" id="amt-2" value="100"></div>
-            <button id="btn-2" class="main-btn" onclick="handleBet(2)">BET</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    let isOtpSent = false;
-
-    function toggleAuthTab(tab) {
-        const isLogin = (tab === 'login');
-        document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
-        document.getElementById('form-register').style.display = isLogin ? 'none' : 'block';
-        document.getElementById('tab-login').classList.toggle('active', isLogin);
-        document.getElementById('tab-register').classList.toggle('active', !isLogin);
+app.post('/api/verify-otp', (req, res) => {
+    const email = req.body.email;
+    const otp = req.body.otp;
+    if (tempUsers[email] && tempUsers[email].otp == otp) {
+        res.json({ success: true });
+    } else {
+        res.json({ success: false, message: "Invalid OTP!" });
     }
+});
 
-    async function handleRegistration() {
-        const name = document.getElementById('reg-name').value;
-        const email = document.getElementById('reg-email').value;
-        const pass = document.getElementById('reg-pass').value;
+app.post('/api/login', (req, res) => {
+    res.json({ success: true });
+});
 
-        if (!isOtpSent) {
-            if(!name || !email || !pass) return alert("Fill all fields");
-            const res = await fetch('/api/register-request', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ name, email, pass })
-            });
-            const result = await res.json();
-            alert(result.message);
-            document.getElementById('otp-section').style.display = 'block';
-            isOtpSent = true;
-        } else {
-            const otp = document.getElementById('reg-otp').value;
-            const res = await fetch('/api/verify-otp', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ email, otp })
-            });
-            const result = await res.json();
-            if(result.success) { alert("Registered!"); location.reload(); }
-            else alert("Wrong OTP");
-        }
-    }
-
-    async function handleLogin() {
-        const res = await fetch('/api/login', { method: 'POST' });
-        document.getElementById('auth-screen').style.display = 'none';
-        document.getElementById('game-ui').style.display = 'block';
-        startLoop();
-    }
-
-    // PLANE GAME LOGIC (Original)
-    const canvas = document.getElementById('gameCanvas');
-    const ctx = canvas.getContext('2d');
-    const planeImg = new Image();
-    planeImg.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjRjAwMDU1IiBkPSJNMjIuMyA0MjkuNmwyNC40IDYwLjFjLjkgMi4yIDMuMyAzLjMgNS41IDIuNGwxMzMuNS01MC42TDIyLjMgNDI5LjZ6TTQ4OC43IDU2LjNMMzguNyAzMTguM2MtOC44IDUuMS05IDE3LjctLjMgMjIuN0wyMTUuNyA0MTJsMjczLjEtMzI4LjZjMy0zLjYgMS40LTkuMi0zLjEtOS4zeiIvPjwvc3ZnPg==";
-
-    let wallet = 5000, multiplier = 1.0, isFlying = false;
-
-    function startLoop() {
-        isFlying = false; multiplier = 1.0;
-        document.getElementById('flew-away').style.display = 'none';
-        document.getElementById('multiplier-text').style.display = 'none';
-        document.getElementById('countdown').style.display = 'block';
-        let t = 5;
-        let timer = setInterval(() => {
-            document.getElementById('countdown').innerText = "NEXT ROUND IN "+t+"s";
-            if(t <= 0) { clearInterval(timer); runFlight(); }
-            t--;
-        }, 1000);
-    }
-
-    function runFlight() {
-        isFlying = true;
-        document.getElementById('countdown').style.display = 'none';
-        document.getElementById('multiplier-text').style.display = 'block';
-        let crash = (1.0 + Math.random() * 5).toFixed(2);
-        let loop = setInterval(() => {
-            if (multiplier >= crash) {
-                clearInterval(loop); isFlying = false;
-                document.getElementById('flew-away').style.display = 'block';
-                setTimeout(startLoop, 3000);
-            } else {
-                multiplier += 0.01;
-                document.getElementById('multiplier-text').innerText = multiplier.toFixed(2) + "x";
-                draw();
-            }
-        }, 60);
-    }
-
-    function draw() {
-        ctx.clearRect(0,0,800,400);
-        let x = (multiplier-1)*100 + 50, y = 350 - (multiplier-1)*50;
-        ctx.drawImage(planeImg, x, y, 50, 50);
-    }
-</script>
-</body>
-</html>
+const PORT = process.env.PORT || 3000;
+http.listen(PORT, () => { console.log("Server Live"); });

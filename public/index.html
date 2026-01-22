@@ -211,23 +211,28 @@ async function handleLogin() {
 <div id="history-modal" class="modal"><div class="modal-content"><h3>Your History</h3><div id="personal-history-list"></div><button class="m-btn" onclick="closeModals()">Close</button></div></div>
 
 <script>
-// --- AUTH FRONTEND LOGIC (PURANA HATA KAR ISE DALEIN) ---
 function toggleAuthTab(tab) {
     const isLogin = (tab === 'login');
-    document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
-    document.getElementById('form-register').style.display = isLogin ? 'none' : 'block';
+    const loginForm = document.getElementById('form-login');
+    const regForm = document.getElementById('form-register');
+    const loginTab = document.getElementById('tab-login');
+    const regTab = document.getElementById('tab-register');
+
+    if (loginForm && regForm) {
+        loginForm.style.display = isLogin ? 'block' : 'none';
+        regForm.style.display = isLogin ? 'none' : 'block';
+    }
     
-    // UI update logic
-    document.getElementById('tab-login').style.color = isLogin ? '#ff0055' : '#9ea0a3';
-    document.getElementById('tab-login').style.borderBottom = isLogin ? '3px solid #ff0055' : 'none';
-    document.getElementById('tab-register').style.color = isLogin ? '#9ea0a3' : '#ff0055';
-    document.getElementById('tab-register').style.borderBottom = isLogin ? 'none' : '3px solid #ff0055';
+    if (loginTab && regTab) {
+        loginTab.style.color = isLogin ? '#ff0055' : '#9ea0a3';
+        regTab.style.color = isLogin ? '#9ea0a3' : '#ff0055';
+    }
 }
 
 async function handleRegistration() {
     const name = document.getElementById('reg-name').value;
-    const mobile = document.getElementById('reg-mobile').value;
     const email = document.getElementById('reg-email').value;
+    const mobile = document.getElementById('reg-mobile').value;
     const pass = document.getElementById('reg-pass').value;
 
     if(!name || !email || !pass) return alert("Sari details bhariye!");
@@ -240,14 +245,16 @@ async function handleRegistration() {
         });
         const result = await res.json();
         alert(result.message);
-    } catch (err) { alert("Server connection failed!"); }
+    } catch (err) {
+        alert("Server connection failed!");
+    }
 }
 
 async function handleLogin() {
     const id = document.getElementById('login-id').value;
     const pass = document.getElementById('login-pass').value;
 
-    if(!id || !pass) return alert("Details dalein!");
+    if(!id || !pass) return alert("Details bhariye!");
 
     try {
         const res = await fetch('/api/login', {
@@ -258,13 +265,13 @@ async function handleLogin() {
         const result = await res.json();
         if(result.success) {
             document.getElementById('auth-screen').style.display = 'none';
-            alert("Login Safal!");
         } else {
             alert(result.message);
         }
-    } catch (err) { alert("Error connecting to server!"); }
+    } catch (err) {
+        alert("Login failed. Server error!");
+    }
 }
-// --- AUTH LOGIC END ---
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const planeImg = new Image();
